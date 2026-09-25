@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASQ · Command</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div class="brand-text">
+        <h1>ASQ</h1>
+        <span>SNAP25 · ETHUSDT-PERP · BINANCE</span>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <span class="chip">MARKET MAKING</span>
+      <span class="chip dim">FAIR · LGBM</span>
+      <span class="chip dim">AS · AVELLANEDA</span>
+    </div>
+    <div class="topbar-right">
+      <span id="meta-updated">—</span>
+      <div class="status-pill live" id="status-pill">
+        <span class="pulse"></span> LIVE
+      </div>
+    </div>
+  </header>
+
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker"></div>
+  </div>
+
+  <main class="shell">
+    <section class="hero-section">
+      <div class="hero-head">
+        <div>
+          <h2>Liquidity Particle Field</h2>
+          <div class="hint">时间轴粒子密度 = 名义量 · 琥珀挂单 / 青成交 · 白火花 = 转化流 · 拖拽旋转</div>
+        </div>
+        <div class="hero-legend">
+          <div class="legend-item"><span class="legend-dot submit"></span> SUBMIT</div>
+          <div class="legend-item"><span class="legend-dot fill"></span> FILL</div>
+        </div>
+      </div>
+      <div class="hero-canvas-wrap">
+        <canvas id="scene3d"></canvas>
+      </div>
+      <div class="hero-kpis">
+        <div class="hero-kpi featured-submit">
+          <div class="label">挂单额 · Submit</div>
+          <div class="value submit" id="hero-submit">—</div>
+          <div class="sub" id="hero-submit-sub">—</div>
+        </div>
+        <div class="hero-kpi featured-fill">
+          <div class="label">成交额 · Fill</div>
+          <div class="value fill" id="hero-fill">—</div>
+          <div class="sub" id="hero-fill-sub">—</div>
+        </div>
+        <div class="hero-kpi">
+          <div class="label">成交转化率</div>
+          <div class="value neu" id="hero-rate">—</div>
+          <div class="sub" id="hero-rate-sub">—</div>
+        </div>
+        <div class="hero-kpi">
+          <div class="label">成交量 ETH</div>
+          <div class="value neu" id="hero-eth">—</div>
+          <div class="sub" id="hero-eth-sub">—</div>
+        </div>
+      </div>
+      <div class="hour-strip" id="hour-strip"></div>
+    </section>
+
+    <section class="kpi-grid">
+      <div class="kpi">
+        <div class="label">Session</div>
+        <div class="value neu" id="k-runtime">—</div>
+        <div class="sub" id="k-runtime-sub">—</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Equity · CNY</div>
+        <div class="value neu" id="k-eq">—</div>
+        <div class="sub" id="k-eq-sub">—</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Equity Δ</div>
+        <div class="value" id="k-pnl">—</div>
+        <div class="sub" id="k-pnl-sub">—</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Fees</div>
+        <div class="value neg" id="k-fee">—</div>
+        <div class="sub" id="k-fee-sub">—</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Net Position</div>
+        <div class="value" id="k-net">—</div>
+        <div class="sub" id="k-net-sub">—</div>
+      </div>
+    </section>
+
+    <div class="split-2">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Equity Path</h2>
+          <div class="meta">累计 Δ · CNY</div>
+        </div>
+        <div class="panel-body chart-box">
+          <canvas id="chart-equity"></canvas>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Hourly Fees</h2>
+          <div class="meta">CNY</div>
+        </div>
+        <div class="panel-body chart-box">
+          <canvas id="chart-fee"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Recent Fills</h2>
+          <div class="meta">latest 20</div>
+        </div>
+        <div class="panel-body">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Side</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Notional ¥</th>
+                <th>Liq</th>
+              </tr>
+            </thead>
+            <tbody id="fills-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="side-stack">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Risk & Ops</h2>
+            <div class="meta" id="meta-fx">FX 6.77</div>
+          </div>
+          <div class="panel-body">
+            <div class="risk-grid" id="risk-grid"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Worst Closed</h2>
+            <div class="meta">realized ¥</div>
+          </div>
+          <div class="panel-body">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Dir</th>
+                  <th>Peak</th>
+                  <th>Hold</th>
+                  <th>Realized</th>
+                </tr>
+              </thead>
+              <tbody id="worst-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div id="footer-line">ASQ COMMAND</div>
+    <div class="footer-meta"><span id="meta-mtime">—</span></div>
+  </footer>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+[Unit]
+Description=ASQ snap25 Binance live
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/Nautilus_Pair_Trading_Jerry-main
+# Put secrets in an env file (chmod 600), never in git:
+#   BINANCE_API_KEY=...
+#   BINANCE_API_SECRET=...
+#   BINANCE_TESTNET=1
+#   ASQ_INSTRUMENTS=ETHUSDT-PERP.BINANCE
+#   ASQ_CONDA_ENV=xqm0702
+EnvironmentFile=-/home/ubuntu/.config/asq_snap25.env
+ExecStart=/home/ubuntu/Nautilus_Pair_Trading_Jerry-main/asq_snap25/run_linux.sh
+Restart=on-failure
+RestartSec=15
+KillSignal=SIGINT
+TimeoutStopSec=60
+
+# Soft limits — adjust to box size
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

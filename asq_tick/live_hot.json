@@ -1,0 +1,21 @@
+{
+  "signal_threshold": 0.00015,
+  "quote_interval_ms": 1000,
+  "flatten_quote_interval_ms": 1000,
+  "max_hold_ms": 15000,
+  "requote_ticks": 1,
+  "flatten_requote_ticks": 1,
+  "imbalance_when_weak": false,
+  "notional_trade_size_usd": 100,
+  "max_inventory_usd": 100,
+  "wait_for_cancel": true,
+  "spike_halt_bp": 12,
+  "spike_window_ms": 1000,
+  "spike_halt_ms": 15000,
+  "taker_flatten": false,
+  "taker_flatten_on_spike": true,
+  "taker_offset_bp": 20,
+  "min_spread_ticks": 1,
+  "max_spread_ticks": 8,
+  "expire_time_s": 1
+}
